@@ -1,13 +1,14 @@
 import Search from "./Search";
 import Logo from "./Logo";
-import ResultCount from "./ResultCount";
 
-export default function Nav({ movies }) {
+/* Component composition using children to prevent or reduce prop drilling */
+
+export default function Nav({ children }) {
   return (
     <nav className="nav-bar">
       <Logo />
       <Search />
-      <ResultCount movies={movies} />
+      {children}
     </nav>
   );
 }
