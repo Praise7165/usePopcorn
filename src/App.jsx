@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Nav from "./assets/components/Nav";
 import Main from "./assets/components/Main";
 import { tempMovieData } from "../data";
@@ -11,10 +11,21 @@ import Box from "./assets/components/Box";
 import WatchSummary from "./assets/components/WatchSummary";
 import WatchedList from "./assets/components/WatchedList";
 
+const KEY = "518dc1f1";
+
 // Prop drilling is the passing of a prop through several nested child component so as to get a data to deeply nested component.
 function App() {
-  const [movies, setMovies] = useState(tempMovieData);
-  const [watched, setWatched] = useState(tempWatchedData);
+  // const [movies, setMovies] = useState(tempMovieData);
+  // const [watched, setWatched] = useState(tempWatchedData);
+
+  const [movies, setMovies] = useState([]);
+  const [watched, setWatched] = useState([]);
+
+  useEffect(() => {
+    fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=interstellar`)
+      .then((res) => res.json())
+      .then((data) => setMovies(data.Search));
+  }, []);
 
   return (
     <>
