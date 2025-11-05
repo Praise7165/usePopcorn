@@ -20,17 +20,41 @@ function App() {
 
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [query, setQuery] = useState("interstellar");
 
+  /*
+  // CALLING API USING FETCH REQUEST
   useEffect(() => {
     fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=interstellar`)
       .then((res) => res.json())
       .then((data) => setMovies(data.Search));
   }, []);
+  */
+
+  // CALLING API USING ASYNC AWAIT
+  useEffect(() => {
+    async function fetchMovies() {
+      setIsLoading(true);
+      const res = await fetch(
+        `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+      );
+      const data = await res.json();
+      setMovies(data.Search);
+      setIsLoading(false);
+    }
+
+    fetchMovies();
+  }, [query]);
+
+  function handleSearch(e) {
+    setQuery(e.target.value);
+  }
 
   return (
     <>
       {/* Component composition using children to prevent or reduce prop drilling */}
-      <Nav>
+      <Nav query={query} onSearch={handleSearch}>
         <ResultCount movies={movies} />
       </Nav>
 
@@ -38,9 +62,7 @@ function App() {
         {/* PASSING ELEMENT AS PROPS: We can now receive our element  props here as props 
         <Box element={<MovieList movies={movies} />} />
         */}
-        <Box>
-          <MovieList movies={movies} />
-        </Box>
+        <Box>{isLoading ? <Loader /> : <MovieList movies={movies} />}</Box>
 
         <Box>
           <WatchSummary watched={watched} />
@@ -51,4 +73,12 @@ function App() {
   );
 }
 
+function Loader() {
+  return (
+    <div className="loader-container">
+      <span class="loader"></span>
+      <p>Loading...</p>
+    </div>
+  );
+}
 export default App;
