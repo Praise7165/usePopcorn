@@ -22,6 +22,7 @@ function App() {
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [query, setQuery] = useState("interstellar");
+  const [error, setError] = useState("");
 
   /*
   // CALLING API USING FETCH REQUEST
@@ -35,13 +36,26 @@ function App() {
   // CALLING API USING ASYNC AWAIT
   useEffect(() => {
     async function fetchMovies() {
-      setIsLoading(true);
-      const res = await fetch(
-        `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
-      );
-      const data = await res.json();
-      setMovies(data.Search);
-      setIsLoading(false);
+      try {
+        setIsLoading(true);
+        const res = await fetch(
+          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+        );
+        if (!res.ok)
+          throw new Error("something went wrong with fetching movies");
+
+        const data = await res.json();
+        console.log(data);
+
+        if (data.Response === "True") setError("");
+        else throw new Error(`Movie not found`);
+
+        setMovies(data.Search);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
     }
 
     fetchMovies();
@@ -62,7 +76,11 @@ function App() {
         {/* PASSING ELEMENT AS PROPS: We can now receive our element  props here as props 
         <Box element={<MovieList movies={movies} />} />
         */}
-        <Box>{isLoading ? <Loader /> : <MovieList movies={movies} />}</Box>
+        <Box>
+          {!isLoading && !error && <MovieList movies={movies} />}
+          {isLoading && <Loader />}
+          {error && <ErrorMessage message={error} />}
+        </Box>
 
         <Box>
           <WatchSummary watched={watched} />
@@ -76,9 +94,18 @@ function App() {
 function Loader() {
   return (
     <div className="loader-container">
-      <span class="loader"></span>
+      <span className="loader"></span>
       <p>Loading...</p>
     </div>
+  );
+}
+
+function ErrorMessage({ message }) {
+  return (
+    <p className="error">
+      <span>⚠️</span>
+      {message}
+    </p>
   );
 }
 export default App;
