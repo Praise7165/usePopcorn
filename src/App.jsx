@@ -21,7 +21,7 @@ function App() {
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [query, setQuery] = useState("interstellar");
+  const [query, setQuery] = useState("");
   const [error, setError] = useState("");
 
   /*
@@ -38,6 +38,8 @@ function App() {
     async function fetchMovies() {
       try {
         setIsLoading(true);
+        setError("");
+
         const res = await fetch(
           `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
         );
@@ -45,10 +47,8 @@ function App() {
           throw new Error("something went wrong with fetching movies");
 
         const data = await res.json();
-        console.log(data);
 
-        if (data.Response === "True") setError("");
-        else throw new Error(`Movie not found`);
+        if (data.Response === "False") throw new Error(`Movie not found`);
 
         setMovies(data.Search);
       } catch (err) {
@@ -56,6 +56,12 @@ function App() {
       } finally {
         setIsLoading(false);
       }
+    }
+
+    if (query.length < 3) {
+      setMovies([]);
+      setError("Enter a movie name to start searching");
+      return;
     }
 
     fetchMovies();
