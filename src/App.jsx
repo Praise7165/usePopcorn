@@ -23,6 +23,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [query, setQuery] = useState("");
   const [error, setError] = useState("");
+  const [selected, setSelected] = useState(null);
 
   /*
   // CALLING API USING FETCH REQUEST
@@ -71,6 +72,14 @@ function App() {
     setQuery(e.target.value);
   }
 
+  function handleSelectMovie(id) {
+    setSelected((selected) => (selected === id ? null : id));
+  }
+
+  function handleCloseMovie() {
+    setSelected(null);
+  }
+
   return (
     <>
       {/* Component composition using children to prevent or reduce prop drilling */}
@@ -83,14 +92,22 @@ function App() {
         <Box element={<MovieList movies={movies} />} />
         */}
         <Box>
-          {!isLoading && !error && <MovieList movies={movies} />}
+          {!isLoading && !error && (
+            <MovieList movies={movies} onClick={handleSelectMovie} />
+          )}
           {isLoading && <Loader />}
           {error && <ErrorMessage message={error} />}
         </Box>
 
         <Box>
-          <WatchSummary watched={watched} />
-          <WatchedList watched={watched} />
+          {selected ? (
+            <MovieDetails selected={selected} onClick={handleCloseMovie} />
+          ) : (
+            <>
+              <WatchSummary watched={watched} />
+              <WatchedList watched={watched} />
+            </>
+          )}
         </Box>
       </Main>
     </>
@@ -114,4 +131,16 @@ function ErrorMessage({ message }) {
     </p>
   );
 }
+
+function MovieDetails({ selected, onClick }) {
+  return (
+    <div className="details">
+      <button className="btn-back" onClick={onClick}>
+        &larr;
+      </button>
+      {selected}
+    </div>
+  );
+}
+
 export default App;
