@@ -133,12 +133,63 @@ function ErrorMessage({ message }) {
 }
 
 function MovieDetails({ selected, onClick }) {
+  const [movie, setMovie] = useState({});
+
+  const {
+    Title: title,
+    Year: year,
+    Poster: poster,
+    Runtime: runtime,
+    imdbRating,
+    Plot: plot,
+    Released: released,
+    Actors: actors,
+    Director: director,
+    Genre: genre,
+  } = movie;
+
+  useEffect(() => {
+    async function getMovieDetails() {
+      const res = await fetch(
+        `http://www.omdbapi.com/?apikey=${KEY}&i=${selected}`
+      );
+
+      if (!res.ok) throw new Error("something went wrong with fetching movies");
+
+      const data = await res.json();
+
+      setMovie(data);
+    }
+
+    getMovieDetails();
+  }, [selected]);
   return (
     <div className="details">
-      <button className="btn-back" onClick={onClick}>
-        &larr;
-      </button>
-      {selected}
+      <header>
+        <button className="btn-back" onClick={onClick}>
+          &larr;
+        </button>
+        <img src={poster} alt={`poster of ${title}`} />
+        <div className="details-overview">
+          <h2>{title}</h2>
+          <p>
+            {released} &bull; {runtime}
+          </p>
+          <p>{genre}</p>
+          <p>
+            <span>⭐</span>
+            {imdbRating} IMDb rating
+          </p>
+        </div>
+      </header>
+
+      <section>
+        <p>
+          <em>{plot}</em>
+        </p>
+        <p>Starring {actors}</p>
+        <p>Directed by {director}</p>
+      </section>
     </div>
   );
 }
