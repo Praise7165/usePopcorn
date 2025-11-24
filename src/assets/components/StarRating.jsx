@@ -128,14 +128,3 @@ function Star({ onClick, filled, onHover, color, size }) {
     </span>
   );
 }
-
-/*
-FULL STAR
-
-
-
-EMPTY STAR
-
-
-
-*/

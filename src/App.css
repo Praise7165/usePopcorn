@@ -49,6 +49,13 @@ body {
   justify-content: center;
 }
 
+.centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
 .box {
   width: 42rem;
   max-width: 42rem;
@@ -56,6 +63,7 @@ body {
   border-radius: 0.9rem;
   position: relative;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .loader-container {
@@ -175,6 +183,22 @@ body {
 
   padding: 1.6rem 3.2rem;
   border-bottom: 1px solid var(--color-background-100);
+}
+
+.watched {
+  position: absolute;
+  animation: swipe 0.3s ease-in-out;
+}
+
+@keyframes swipe {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(32px);
+    opacity: 0;
+  }
 }
 
 .list.list-movies li {
