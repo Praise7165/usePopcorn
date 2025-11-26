@@ -32,13 +32,16 @@ function App() {
 
   // CALLING API USING ASYNC AWAIT
   useEffect(() => {
+    const controller = new AbortController();
+
     async function fetchMovies() {
       try {
         setIsLoading(true);
         setError("");
 
         const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+          { signal: controller.signal }
         );
         if (!res.ok)
           throw new Error("something went wrong with fetching movies");
@@ -48,8 +51,9 @@ function App() {
         if (data.Response === "False") throw new Error(`Movie not found`);
 
         setMovies(data.Search);
+        setError("");
       } catch (err) {
-        setError(err.message);
+        if (err.name !== "AbortError") setError(err.message);
       } finally {
         setIsLoading(false);
       }
@@ -61,7 +65,11 @@ function App() {
       return;
     }
 
+    //close movie details before searching for movies
+    handleCloseMovie();
     fetchMovies();
+
+    return () => controller.abort();
   }, [query]);
 
   function handleSearch(e) {
@@ -179,14 +187,13 @@ function MovieDetails({ selected, watched, onCloseMovie, onAddMovie }) {
     Genre: genre,
   } = movie;
 
+  // effect to load movie details
   useEffect(() => {
     async function getMovieDetails() {
       setIsLoading(true);
       const res = await fetch(
         `http://www.omdbapi.com/?apikey=${KEY}&i=${selected}`
       );
-
-      if (!res.ok) throw new Error("something went wrong with fetching movies");
 
       const data = await res.json();
 
@@ -196,6 +203,29 @@ function MovieDetails({ selected, watched, onCloseMovie, onAddMovie }) {
 
     getMovieDetails();
   }, [selected]);
+
+  // effect to change document title
+  useEffect(() => {
+    if (!title) return;
+    document.title = `Movie | ${title}`;
+
+    // clean up function.
+    // this clean up function is executed when a previous component is unmounted.
+    return () => (document.title = "usePopCorn");
+  }, [title]);
+
+  // make escape key close movie details when pressed.
+  useEffect(() => {
+    function closeMovieDetails(e) {
+      if (e.code === "Escape") onCloseMovie();
+    }
+
+    document.addEventListener("keydown", closeMovieDetails);
+
+    return () => {
+      document.removeEventListener("keydown", closeMovieDetails);
+    };
+  }, [onCloseMovie]);
 
   function handleAdd() {
     const newWatchedMovie = {
