@@ -15,36 +15,11 @@ const KEY = "518dc1f1";
 // Prop drilling is the passing of a prop through several nested child component so as to get a data to deeply nested component.
 function App() {
   const [movies, setMovies] = useState([]);
-
+  const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [query, setQuery] = useState("");
   const [error, setError] = useState("");
   const [selected, setSelected] = useState(null);
-
-  const [watched, setWatched] = useState(() => {
-    const stored = localStorage.getItem("watched");
-    return JSON.parse(stored);
-  });
-
-  function handleSearch(e) {
-    setQuery(e.target.value);
-  }
-
-  function handleSelectMovie(id) {
-    setSelected((selected) => (selected === id ? null : id));
-  }
-
-  function handleCloseMovie() {
-    setSelected(null);
-  }
-
-  function handleAddToWatchedList(movie) {
-    setWatched((watched) => [...watched, movie]);
-  }
-
-  function handleDeleteFromWatched(id) {
-    setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
-  }
 
   /*
   // CALLING API USING FETCH REQUEST
@@ -97,9 +72,25 @@ function App() {
     return () => controller.abort();
   }, [query]);
 
-  useEffect(() => {
-    localStorage.setItem("watched", JSON.stringify(watched));
-  }, [watched]);
+  function handleSearch(e) {
+    setQuery(e.target.value);
+  }
+
+  function handleSelectMovie(id) {
+    setSelected((selected) => (selected === id ? null : id));
+  }
+
+  function handleCloseMovie() {
+    setSelected(null);
+  }
+
+  function handleAddToWatchedList(movie) {
+    setWatched((watched) => [...watched, movie]);
+  }
+
+  function handleDeleteFromWatched(id) {
+    setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
+  }
 
   return (
     <>
