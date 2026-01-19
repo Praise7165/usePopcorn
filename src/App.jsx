@@ -104,7 +104,7 @@ function App() {
   return (
     <>
       {/* Component composition using children to prevent or reduce prop drilling */}
-      <Nav query={query} onSearch={handleSearch}>
+      <Nav query={query} onSearch={handleSearch} setQuery={setQuery}>
         <ResultCount movies={movies} />
       </Nav>
 

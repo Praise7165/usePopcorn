@@ -3,11 +3,11 @@ import Logo from "./Logo";
 
 /* Component composition using children to prevent or reduce prop drilling */
 
-export default function Nav({ children, query, onSearch }) {
+export default function Nav({ children, query, onSearch, setQuery }) {
   return (
     <nav className="nav-bar">
       <Logo />
-      <Search query={query} onSearch={onSearch} />
+      <Search query={query} onSearch={onSearch} setQuery={setQuery} />
       {children}
     </nav>
   );
