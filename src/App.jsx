@@ -40,6 +40,7 @@ function App() {
 
   function handleAddToWatchedList(movie) {
     setWatched((watched) => [...watched, movie]);
+    // localStorage.setItem("watched", JSON.stringify([...watched, movie]));
   }
 
   function handleDeleteFromWatched(id) {
@@ -66,7 +67,7 @@ function App() {
 
         const res = await fetch(
           `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
-          { signal: controller.signal }
+          { signal: controller.signal },
         );
         if (!res.ok)
           throw new Error("something went wrong with fetching movies");
@@ -167,6 +168,7 @@ function MovieDetails({ selected, watched, onCloseMovie, onAddMovie }) {
   const [movie, setMovie] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState(null);
+  // const [avgRating, setAvgRating] = useState(0);
 
   // DERIVED STATE
 
@@ -180,7 +182,7 @@ function MovieDetails({ selected, watched, onCloseMovie, onAddMovie }) {
 
   // here we find the object whose id is same as the selected movie and get the user rating from there
   const watchedMovieRating = watched.find(
-    (movie) => movie.imdbID === selected
+    (movie) => movie.imdbID === selected,
   )?.userRating;
 
   const {
@@ -201,7 +203,7 @@ function MovieDetails({ selected, watched, onCloseMovie, onAddMovie }) {
     async function getMovieDetails() {
       setIsLoading(true);
       const res = await fetch(
-        `http://www.omdbapi.com/?apikey=${KEY}&i=${selected}`
+        `http://www.omdbapi.com/?apikey=${KEY}&i=${selected}`,
       );
 
       const data = await res.json();
@@ -248,6 +250,7 @@ function MovieDetails({ selected, watched, onCloseMovie, onAddMovie }) {
     };
 
     onAddMovie(newWatchedMovie);
+
     onCloseMovie();
   }
 
@@ -274,7 +277,6 @@ function MovieDetails({ selected, watched, onCloseMovie, onAddMovie }) {
               </p>
             </div>
           </header>
-
           <section>
             <div className="rating">
               {!isWatched ? (
