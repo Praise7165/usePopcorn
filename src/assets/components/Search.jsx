@@ -9,6 +9,7 @@ export default function Search({ query, onSearch, setQuery }) {
 
       if (document.activeElement === inputRef.current) return;
 
+      // focus on enter key press
       if (e.code === "Enter") {
         inputRef.current.focus();
         setQuery("");
